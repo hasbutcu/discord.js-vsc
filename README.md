@@ -7,6 +7,7 @@ Discord botları için geliştirilmiş kapsamlı bir modül. Ban sistemi, ses si
 [![Discord.js](https://img.shields.io/badge/Discord.js-14.14.1+-blue.svg)](https://discord.js.org/)
 [![GitHub stars](https://img.shields.io/github/stars/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
 [![GitHub forks](https://img.shields.io/github/forks/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
+[![NPM version](https://img.shields.io/npm/v/discord.js-vsc.svg?cache=1)](https://www.npmjs.com/package/discord.js-vsc)
 [![NPM downloads](https://img.shields.io/npm/dm/discord.js-vsc.svg?cache=1)](https://www.npmjs.com/package/discord.js-vsc)
 
 ## 📋 İçindekiler
@@ -83,7 +84,7 @@ const client = new Client({
 const bot = new Oxy(client);
 
 // Sistemleri yapılandır
-ikiban({
+bot.ikiban({
   main: 'ANA_SUNUCU_ID',
   yan: 'YAN_SUNUCU_ID',
   bansebep: 'Ana sunucudan ayrıldığı için atıldı.',
@@ -91,12 +92,12 @@ ikiban({
   action: 'ban'
 });
 
-ses({
+bot.ses({
   seskanali: 'SES_KANAL_ID',
   sunucu: 'SUNUCU_ID'
 });
 
-durumrol({
+bot.durumrol({
   guildid: 'SUNUCU_ID',
   rolid: 'ROL_ID',
   durum: 'vsc',
@@ -126,7 +127,7 @@ client.login('BOT_TOKEN');
 
 #### Örnek Kullanım
 ```javascript
-ikiban({
+bot.ikiban({
   main: '1234567890123456789',      // Ana sunucu
   yan: '9876543210987654321',       // Yan sunucu
   bansebep: 'Ana sunucudan ayrıldığı için atıldı.',
@@ -148,7 +149,7 @@ ikiban({
 
 #### Örnek Kullanım
 ```javascript
-ses({
+bot.ses({
   seskanali: '1234567890123456789', // Ses kanalı ID'si
   sunucu: '1234567890123456789'     // Sunucu ID'si
 });
@@ -170,7 +171,7 @@ ses({
 
 #### Örnek Kullanım
 ```javascript
-durumrol({
+bot.durumrol({
   guildid: '1234567890123456789',   // Sunucu ID'si
   rolid: '1234567890123456789',     // Rol ID'si
   durum: 'vsc',                     // Aranacak metin
@@ -204,7 +205,7 @@ const client = new Client({
 const bot = new Oxy(client);
 
 // Ban Sistemi - Ana sunucudan ayrılanları yan sunucudan banla
-ikiban({
+bot.ikiban({
   main: '1406592502810542140',           // Ana sunucu
   yan: '1406998013192179893',            // Yan sunucu
   bansebep: 'Ana sunucudan ayrıldığı için atıldı.',
@@ -213,13 +214,13 @@ ikiban({
 });
 
 // Ses Sistemi - Belirtilen ses kanalına otomatik bağlan
-ses({
+bot.ses({
   seskanali: '1406602193670373467',      // Ses kanalı
   sunucu: '1406592502810542140'          // Sunucu
 });
 
 // Durum Rol Sistemi - "vsc" yazanlara rol ver
-durumrol({
+bot.durumrol({
   guildid: '1406592502810542140',        // Sunucu
   rolid: '1406593872254992507',          // Rol
   durum: 'vsc',                          // Aranacak metin
@@ -257,7 +258,7 @@ client.login(BOT_TOKEN);
 ```javascript
 const bot = new Oxy(client);
 
-ikiban({
+bot.ikiban({
   main: 'ANA_SUNUCU_ID',
   yan: 'YAN_SUNUCU_ID'
 });
@@ -267,7 +268,7 @@ ikiban({
 ```javascript
 const bot = new Oxy(client);
 
-ses({
+bot.ses({
   seskanali: 'SES_KANAL_ID',
   sunucu: 'SUNUCU_ID'
 });
@@ -277,7 +278,7 @@ ses({
 ```javascript
 const bot = new Oxy(client);
 
-durumrol({
+bot.durumrol({
   guildid: 'SUNUCU_ID',
   rolid: 'ROL_ID',
   durum: 'vsc'
