@@ -1,0 +1,52 @@
+{
+  "name": "discord.js-vsc",
+  "version": "1.0.0",
+  "description": "VSC Discord Bot Module - Ban System, Voice System, Status Role System",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "publish": "npm publish"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "module",
+    "discord.js",
+    "vsc",
+    "ban-system",
+    "voice-system",
+    "status-role",
+    "automation",
+    "discord-bot",
+    "bot-module"
+  ],
+  "author": "hasbutcu",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/voice": "^0.16.1",
+    "discord.js": "^14.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hasbutcu/discord.js-vsc.git"
+  },
+  "homepage": "https://github.com/hasbutcu/discord.js-vsc#readme",
+  "bugs": {
+    "url": "https://github.com/hasbutcu/discord.js-vsc/issues"
+  },
+  "engines": {
+    "node": ">=20.19.3"
+  },
+  "private": false,
+  "files": [
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
