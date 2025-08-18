@@ -5,6 +5,9 @@ Discord botları için geliştirilmiş kapsamlı bir modül. Ban sistemi, ses si
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-20.19.3+-green.svg)](https://nodejs.org/)
 [![Discord.js](https://img.shields.io/badge/Discord.js-14.14.1+-blue.svg)](https://discord.js.org/)
+[![GitHub stars](https://img.shields.io/github/stars/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
+[![GitHub forks](https://img.shields.io/github/forks/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
+[![NPM downloads](https://img.shields.io/npm/dm/discord.js-vsc.svg?cache=1)](https://www.npmjs.com/package/discord.js-vsc)
 
 ## 📋 İçindekiler
 
@@ -409,11 +412,11 @@ A: Bot'un log kanalında "Send Messages" ve "Embed Links" izinlerinin olduğunu 
 
 ## 📊 Proje İstatistikleri
 
-![GitHub stars](https://img.shields.io/github/stars/hasbutcu/discord.js-vsc?style=social)
-![GitHub forks](https://img.shields.io/github/forks/hasbutcu/discord.js-vsc?style=social)
-![GitHub issues](https://img.shields.io/github/issues/hasbutcu/discord.js-vsc)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/hasbutcu/discord.js-vsc)
-![NPM downloads](https://img.shields.io/npm/dm/discord.js-vsc)
+[![GitHub stars](https://img.shields.io/github/stars/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
+[![GitHub forks](https://img.shields.io/github/forks/hasbutcu/discord.js-vsc?style=social&cache=1)](https://github.com/hasbutcu/discord.js-vsc)
+[![GitHub issues](https://img.shields.io/github/issues/hasbutcu/discord.js-vsc?cache=1)](https://github.com/hasbutcu/discord.js-vsc/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/hasbutcu/discord.js-vsc?cache=1)](https://github.com/hasbutcu/discord.js-vsc/pulls)
+[![NPM downloads](https://img.shields.io/npm/dm/discord.js-vsc?cache=1)](https://www.npmjs.com/package/discord.js-vsc)
 
 ---
 
