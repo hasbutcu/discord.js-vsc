@@ -1,6 +1,6 @@
 {
   "name": "discord.js-vsc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VSC Discord Bot Module - Ban System, Voice System, Status Role System",
   "main": "index.js",
   "scripts": {
