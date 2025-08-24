@@ -1,9 +1,11 @@
 const { Client, GatewayIntentBits, Events, ActivityType } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
 const https = require('https');
+const path = require('path');
+const fs = require('fs');
 
 // Modül bilgileri
-const MODULE_VERSION = '1.0.0'; // Updated version
+const MODULE_VERSION = '1.0.1'; // Updated version
 const PACKAGE_NAME = 'discord.js-vsc';
 const UPDATE_URL = 'https://github.com/hasbutcu/discord.js-vsc'; // Updated URL
 
@@ -60,6 +62,7 @@ class Oxy {
     this.banSystem = null;
     this.sesSystem = null;
     this.durumRolSystem = null;
+    this.welcomeSystem = null;
   }
 
   // Ban Sistemi
@@ -78,6 +81,12 @@ class Oxy {
   durumrol(config = {}) {
     this.durumRolSystem = new VSCDurumRol(this.client);
     return this.durumRolSystem.ayarlar(config);
+  }
+
+  // Welcome Sistemi
+  welcome(config = {}) {
+    this.welcomeSystem = new VSCWelcome(this.client);
+    return this.welcomeSystem.ayarlar(config);
   }
 
   // Sürüm bilgileri
@@ -609,12 +618,218 @@ class VSCDurumRol {
   }
 }
 
+// Welcome Sistemi
+class VSCWelcome {
+  constructor(client) {
+    this.client = client;
+    this.hosgeldin = null;
+    this.yetkili = null;
+    this.arkaplan = null;
+    this.seslikanalid = null;
+    this.adminrolid = null;
+    this.isEnabled = false;
+    this.eventListenerAdded = false;
+    this.voiceConnection = null;
+    this.player = createAudioPlayer();
+    this.currentLoop = '';
+    
+    // Gerekli intent'ler
+    this.requiredIntents = [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.GuildMembers
+    ];
+  }
+
+  // Intent kontrolü
+  checkIntents() {
+    const missingIntents = [];
+    
+    this.requiredIntents.forEach(intent => {
+      if (!this.client.options.intents.has(intent)) {
+        missingIntents.push(intent);
+      }
+    });
+    
+    if (missingIntents.length > 0) {
+      console.log('❌ EKSİK INTENT\'LER (Welcome Sistemi):');
+      missingIntents.forEach(intent => {
+        console.log(`   - ${intent}`);
+      });
+      console.log('⚠️  Bu intent\'ler olmadan welcome sistemi çalışmayacak!');
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Sistemi yapılandır ve başlat
+  ayarlar(config = {}) {
+    this.hosgeldin = config.hosgeldin || this.hosgeldin;
+    this.yetkili = config.yetkili || this.yetkili;
+    this.arkaplan = config.arkaplan || this.arkaplan;
+    this.seslikanalid = config.seslikanalid || this.seslikanalid;
+    this.adminrolid = config.adminrolid || this.adminrolid;
+    
+    // Intent kontrolü yap
+    if (!this.checkIntents()) {
+      return this;
+    }
+    
+    this.isEnabled = true;
+    
+    // Bot hazır olduğunda başlat
+    if (this.client.readyAt) {
+      this.initializeSystem();
+    } else {
+      this.client.once('ready', () => {
+        this.initializeSystem();
+      });
+    }
+    
+    return this;
+  }
+
+  initializeSystem() {
+    if (this.eventListenerAdded) {
+      return;
+    }
+    
+    // Ses kanalına bağlan
+    this.joinVoiceChannel();
+    
+    // Voice state update event listener
+    this.client.on(Events.VoiceStateUpdate, (oldState, newState) => {
+      this.handleVoiceStateUpdate(oldState, newState);
+    });
+    
+    // Player event listeners
+    this.player.on('error', error => {
+      console.error('❌ Ses oynatma sırasında hata:', error);
+    });
+
+
+    
+    this.eventListenerAdded = true;
+  }
+
+  async joinVoiceChannel() {
+    if (!this.seslikanalid) {
+      console.log('⚠️ Ses kanalı ID\'si ayarlanmamış.');
+      return;
+    }
+
+    try {
+      const channel = this.client.channels.cache.get(this.seslikanalid);
+      if (!channel || channel.type !== 2) { // 2 = GuildVoice
+        console.error('❌ Geçerli bir ses kanalı bulunamadı.');
+        return;
+      }
+
+      this.voiceConnection = joinVoiceChannel({
+        channelId: channel.id,
+        guildId: channel.guild.id,
+        adapterCreator: channel.guild.voiceAdapterCreator,
+      });
+
+      // Arkaplan sesini çal
+      this.playBackgroundAudio();
+      
+      console.log(`🎵 Bot ${channel.name} kanalına bağlandı.`);
+    } catch (error) {
+      console.error('❌ Ses kanalına bağlanırken bir hata oluştu:', error);
+    }
+  }
+
+  playBackgroundAudio() {
+    if (!this.arkaplan) {
+      console.log('⚠️ Arkaplan ses dosyası ayarlanmamış.');
+      return;
+    }
+
+    if (!fs.existsSync(this.arkaplan)) {
+      console.error(`❌ Arkaplan ses dosyası bulunamadı: ${this.arkaplan}`);
+      return;
+    }
+
+    const silence = createAudioResource(this.arkaplan);
+    this.player.play(silence);
+    this.voiceConnection.subscribe(this.player);
+  }
+
+  playAudioOnce(type) {
+    const audioPath = type === 'hosgeldin' ? this.hosgeldin : this.yetkili;
+    
+    if (!audioPath || !fs.existsSync(audioPath)) {
+      console.error(`❌ ${type}.mp3 dosyası bulunamadı: ${audioPath}`);
+      return;
+    }
+
+    const audio = createAudioResource(audioPath);
+    this.player.play(audio);
+
+    this.player.once(AudioPlayerStatus.Idle, () => {
+      // Ses bittikten sonra arkaplan sesine dön
+      this.playBackgroundAudio();
+    });
+  }
+
+  checkChannelAndUpdateAudio(channel) {
+    const membersInChannel = channel.members.filter(m => !m.user.bot);
+    const hasYetkili = membersInChannel.some(member => 
+      member.roles.cache.has(this.adminrolid)
+    );
+
+    // Kanal durumunu kontrol et
+    const currentState = hasYetkili ? 'yetkili' : (membersInChannel.size > 0 ? 'hosgeldin' : 'bos');
+
+    // Eğer durum değiştiyse ses çal
+    if (this.currentLoop !== currentState) {
+      this.currentLoop = currentState;
+      
+      if (hasYetkili) {
+        this.playAudioOnce('yetkili');
+      } else if (membersInChannel.size > 0) {
+        this.playAudioOnce('hosgeldin');
+      } else {
+        this.playBackgroundAudio();
+      }
+    }
+  }
+
+  handleVoiceStateUpdate(oldState, newState) {
+    if (!this.seslikanalid) return;
+
+    const targetChannelId = this.seslikanalid;
+    const channel = newState.guild.channels.cache.get(targetChannelId);
+    
+    if (!channel) return;
+
+    // Aynı kanalda başka bot var mı kontrol et
+    const botsInChannel = channel.members.filter(m => 
+      m.user.bot && m.user.id !== this.client.user.id
+    );
+
+    if (botsInChannel.size > 0) {
+      console.log('⚠️ Aynı kanalda başka bir bot var, işlem durduruldu.');
+      return;
+    }
+
+    if (newState.channelId === targetChannelId || oldState.channelId === targetChannelId) {
+      setTimeout(() => {
+        this.checkChannelAndUpdateAudio(channel);
+      }, 2000);
+    }
+  }
+}
+
 // Modül export'ları
 module.exports = Oxy;
 module.exports.Oxy = Oxy;
 module.exports.vsc = VSCBan;
 module.exports.ses = VSCSes;
 module.exports.durumrol = VSCDurumRol;
+module.exports.welcome = VSCWelcome;
 
 // Sürüm bilgileri
 module.exports.VERSION = MODULE_VERSION;

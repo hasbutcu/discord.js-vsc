@@ -38,6 +38,13 @@ Discord botları için geliştirilmiş kapsamlı bir modül. Ban sistemi, ses si
 - **Özel Durum Eşleştirme**: Belirttiğiniz metni içeren durumlara rol verir
 - **Log Sistemi**: Rol verme/alma işlemlerini loglar
 
+### 🎵 Welcome Sistemi (`welcome()`)
+- **Otomatik Ses Çalma**: Ses kanalına giren kullanıcılara özel sesler çalar
+- **Yetkili Kontrolü**: Yetkili rolüne sahip kullanıcılar için farklı ses
+- **Tek Seferlik Çalma**: Ses dosyaları bir kez çalar, sürekli tekrar etmez
+- **Arkaplan Sesi**: Kimse yokken sessiz arkaplan sesi çalar
+- **Otomatik Bağlanma**: Bot belirtilen ses kanalına otomatik bağlanır
+
 ## 📦 Kurulum
 
 ### Gereksinimler
@@ -98,6 +105,14 @@ durumrol({
   rolid: 'ROL_ID',
   durum: 'vsc',
   log: 'LOG_KANAL_ID'
+});
+
+welcome({
+  hosgeldin: './hosgeldin.mp3',
+  yetkili: './yetkili.mp3',
+  arkaplan: './silence.mp3',
+  seslikanalid: 'SES_KANAL_ID',
+  adminrolid: 'YETKILI_ROL_ID'
 });
 
 // Bot'u başlat
@@ -175,6 +190,34 @@ durumrol({
 });
 ```
 
+### 🎵 Welcome Sistemi Detayları
+
+#### Parametreler
+- `hosgeldin` (zorunlu): Normal kullanıcılar için ses dosyası yolu
+- `yetkili` (zorunlu): Yetkili kullanıcılar için ses dosyası yolu
+- `arkaplan` (zorunlu): Arkaplan ses dosyası yolu
+- `seslikanalid` (zorunlu): Botun gireceği ses kanalı ID'si
+- `adminrolid` (zorunlu): Yetkili rolü ID'si
+
+#### Nasıl Çalışır?
+1. Bot belirtilen ses kanalına otomatik bağlanır
+2. Kullanıcı ses kanalına girdiğinde:
+   - **Yetkili varsa**: `yetkili.mp3` bir kez çalar
+   - **Normal kullanıcı varsa**: `hosgeldin.mp3` bir kez çalar
+   - **Kimse yoksa**: `silence.mp3` (sessiz) çalar
+3. Ses dosyaları sürekli tekrar etmez, sadece yeni kullanıcı geldiğinde çalar
+
+#### Örnek Kullanım
+```javascript
+welcome({
+  hosgeldin: './hosgeldin.mp3',     // Normal kullanıcı sesi
+  yetkili: './yetkili.mp3',         // Yetkili sesi
+  arkaplan: './silence.mp3',        // Arkaplan sesi
+  seslikanalid: '1234567890123456789', // Ses kanalı ID
+  adminrolid: '1234567890123456789'     // Yetkili rol ID
+});
+```
+
 ## 💡 Örnekler
 
 ### Tam Örnek Proje
@@ -221,6 +264,15 @@ durumrol({
   rolid: '1406593872254992507',          // Rol
   durum: 'vsc',                          // Aranacak metin
   log: '1406592834227929130'             // Log kanalı
+});
+
+// Welcome Sistemi - Ses kanalına girenlere özel sesler
+welcome({
+  hosgeldin: './hosgeldin.mp3',          // Normal kullanıcı sesi
+  yetkili: './yetkili.mp3',              // Yetkili sesi
+  arkaplan: './silence.mp3',             // Arkaplan sesi
+  seslikanalid: '1406602193670373467',   // Ses kanalı
+  adminrolid: '1406593872254992507'      // Yetkili rol
 });
 
 // Bot hazır olduğunda
@@ -281,6 +333,19 @@ durumrol({
 });
 ```
 
+#### Sadece Welcome Sistemi
+```javascript
+const bot = new Oxy(client);
+
+welcome({
+  hosgeldin: './hosgeldin.mp3',
+  yetkili: './yetkili.mp3',
+  arkaplan: './silence.mp3',
+  seslikanalid: 'SES_KANAL_ID',
+  adminrolid: 'YETKILI_ROL_ID'
+});
+```
+
 ## ⚠️ Hata Yönetimi
 
 ### Gerekli İzinler
@@ -300,6 +365,11 @@ Bot'un aşağıdaki izinlere sahip olması gerekir:
 - `Manage Roles` - Rolleri yönetmek için
 - `Send Messages` - Log mesajları göndermek için
 - `Embed Links` - Embed mesajları göndermek için
+
+#### Welcome Sistemi İçin:
+- `Connect` - Ses kanallarına bağlanmak için
+- `Speak` - Ses kanalında konuşmak için
+- `Use Voice Activity` - Ses aktivitesi kullanmak için
 
 ### Intent Gereksinimleri
 ```javascript
@@ -399,6 +469,12 @@ A: Bot'un "Manage Roles" izninin olduğunu ve rolünün verilecek rolden yüksek
 
 #### Q: Log mesajları gelmiyor?
 A: Bot'un log kanalında "Send Messages" ve "Embed Links" izinlerinin olduğunu kontrol edin.
+
+#### Q: Welcome sistemi ses çalmıyor?
+A: Bot'un "Connect" ve "Speak" izinlerinin olduğunu ve ses dosyalarının doğru yolda olduğunu kontrol edin.
+
+#### Q: Ses dosyaları sürekli tekrar ediyor?
+A: Bu sorun düzeltildi. Artık ses dosyaları sadece yeni kullanıcı geldiğinde bir kez çalar.
 
 ## 🔗 Faydalı Linkler
 
